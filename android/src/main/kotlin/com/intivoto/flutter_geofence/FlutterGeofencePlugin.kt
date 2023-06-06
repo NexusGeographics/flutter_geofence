@@ -88,6 +88,7 @@ class FlutterGeofencePlugin() : FlutterPlugin, MethodCallHandler, ActivityAware,
                             events = when (event) {
                                 "GeolocationEvent.entry" -> listOf(GeoEvent.entry)
                                 "GeolocationEvent.exit" -> listOf(GeoEvent.exit)
+                                "GeolocationEvent.all" -> listOf(GeoEvent.all)
                                 else -> GeoEvent.values().toList()
                             })
                 }

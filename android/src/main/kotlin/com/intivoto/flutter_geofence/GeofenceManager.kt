@@ -15,7 +15,8 @@ import com.google.android.gms.location.LocationRequest.PRIORITY_LOW_POWER
 
 enum class GeoEvent {
     entry,
-    exit
+    exit,
+    all
 }
 
 data class GeoRegion(
@@ -36,7 +37,9 @@ fun GeoRegion.serialized(): Map<*, *> {
 }
 
 fun GeoRegion.convertRegionToGeofence(): Geofence {
-    val transitionType: Int = if (events.contains(GeoEvent.entry)) {
+    val transitionType: Int = if (events.contains(GeoEvent.all)) {
+        GEOFENCE_TRANSITION_ENTER or GEOFENCE_TRANSITION_EXIT
+    } else if (events.contains(GeoEvent.entry)) {
         GEOFENCE_TRANSITION_ENTER
     } else {
         GEOFENCE_TRANSITION_EXIT
@@ -115,7 +118,7 @@ class GeofenceManager(context: Context,
     private fun refreshLocation() {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
-                locationUpdate(locationResult.lastLocation)
+                locationUpdate(locationResult!!.lastLocation!!)
             }
         }
 
@@ -123,6 +126,7 @@ class GeofenceManager(context: Context,
     }
 
     fun getUserLocation() {
+        Log.d("DC", "getUserLocation")
         fusedLocationClient.apply {
             lastLocation.addOnCompleteListener {
                 it.result?.let {
@@ -139,7 +143,7 @@ class GeofenceManager(context: Context,
     private val backgroundLocationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
             locationResult ?: return
-            backgroundUpdate(locationResult.lastLocation)
+            backgroundUpdate(locationResult!!.lastLocation!!)
         }
     }
 
