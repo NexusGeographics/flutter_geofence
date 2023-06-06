@@ -11,4 +11,4 @@ class Geolocation {
       required this.id});
 }
 
-enum GeolocationEvent { entry, exit }
+enum GeolocationEvent { entry, exit, all }
